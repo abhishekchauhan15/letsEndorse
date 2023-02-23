@@ -14,7 +14,7 @@ const passwordVerification = (password) => {
 };
 
 const phoneNumberVerification = (phoneNumber) => {
-  if (phoneNumber.length != 10) return false;
+  if (phoneNumber.length != 10 && isInteger(phoneNumber)) return false;
   return true;
 };
 
