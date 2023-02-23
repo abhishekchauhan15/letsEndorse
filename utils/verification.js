@@ -9,13 +9,14 @@ const emailVerification = (email) => {
 };
 
 const passwordVerification = (password) => {
-  if (password.length < 6) return false;
-  return true;
+  if (password.length > 6) return true;
+  return false;
 };
 
 const phoneNumberVerification = (phoneNumber) => {
-   if (phoneNumber.length != 10 ||  !Number.isInteger(phoneNumber)) return false;
-      return true;
+  if (/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g.test(phoneNumber) && phoneNumber.length === 10)
+    return true;
+  return false;
 };
 
 module.exports = {
