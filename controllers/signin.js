@@ -1,7 +1,6 @@
 const User = require("../models/userSchema");
-const jwtoken = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-// const authenticate = require("../middleware/authenticate");
 const { encrypt, decrypt } = require("../utils/crypto.js");
 
 exports.signin = async (req, res) => {
@@ -15,11 +14,15 @@ exports.signin = async (req, res) => {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const token = await user.generateAuthToken();
-        res.cookie("jwtoken", token, {
-          expires: new Date(Date.now() + 25892000000),
-          httpOnly: true,
-        });
+        const token = jwt.sign(
+          {
+            id: user._id.toString(),
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: "24h" }
+        );
         res.json({ message: "User signed in successfully", token });
       } else {
         res.json({ error: "Invalid credentials" });

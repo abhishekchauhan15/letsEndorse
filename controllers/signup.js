@@ -15,15 +15,15 @@ exports.signup = async (req, res) => {
   )
     return res.status(422).json({ error: "Invalid Email" });
 
-//   if (phoneNumber != 10) {
-//     return res.status(400).json({
-//       message: "Phone number must be 10 digits",
-//     });
-//   }
+  //   if (phoneNumber != 10) {
+  //     return res.status(400).json({
+  //       message: "Phone number must be 10 digits",
+  //     });
+  //   }
 
   try {
-    const decryptedEmail = decrypt(email);
-    const userExist = await User.findOne({ email: decryptedEmail });
+    const checkEncryptedEmail = encrypt(email);
+    const userExist = await User.findOne({ email: checkEncryptedEmail });
     if (userExist) return res.status(422).json({ error: "User already exist" });
 
     console.log("name: ", name);
