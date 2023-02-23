@@ -1,15 +1,30 @@
 const { encrypt, decrypt } = require("../utils/crypto.js");
 const User = require("../models/userSchema");
+const {
+  emailVerification,
+  phoneNumberVerification,
+  passwordVerification,
+} = require("../utils/verification.js");
 
 exports.updateUserInfo = async (req, res) => {
   try {
     const { name, email, phoneNumber } = req.body;
+
+    if (email && !emailVerification(email))
+      return res.status(422).json({ error: "Invalid Email" });
+
+    if (phoneNumber && !phoneNumberVerification(phoneNumber)) {
+      return res.status(400).json({
+        message: "Phone number must be 10 digits long",
+      });
+    }
     const id = req.user.id;
-    //   console.log(id)
+    console.log(id);
+
     const updatedUser = await User.findByIdAndUpdate(id, {
-      name: name ? name : req.user.name,
-      email: email ? email : req.user.email,
-      phoneNumber: phoneNumber ? phoneNumber : req.user.phoneNumber,
+      name: name ? encrypt(name) : req.user.name,
+      email: email ? encrypt(email) : req.user.email,
+      phoneNumber: phoneNumber ? encrypt(phoneNumber) : req.user.phoneNumber,
     });
 
     if (updatedUser) {

@@ -1,6 +1,11 @@
 const User = require("../models/userSchema");
 const bcrypt = require("bcrypt");
 const { encrypt, decrypt } = require("../utils/crypto.js");
+const {
+  emailVerification,
+  passwordVerification,
+  phoneNumberVerification,
+} = require("../utils/verification.js");
 
 exports.signup = async (req, res) => {
   const { name, phoneNumber, email, password } = req.body;
@@ -8,38 +13,31 @@ exports.signup = async (req, res) => {
   if (!name || !phoneNumber || !email || !password) {
     res.status(422).json({ error: "Please fill all the fields" });
   }
-  if (
-    !/^([a-zA-Z0-9\.-]+)@([a-zA-Z0-9-]+).([a-z]{2,8})(.[a-z]{2,8})?$/.test(
-      email
-    )
-  )
+
+  if (!emailVerification(email))
     return res.status(422).json({ error: "Invalid Email" });
 
-  //   if (phoneNumber != 10) {
-  //     return res.status(400).json({
-  //       message: "Phone number must be 10 digits",
-  //     });
-  //   }
+  if (!passwordVerification(password)) {
+    return res.status(400).json({
+      message: "Password must be at least 6 characters long",
+    });
+  }
+
+  if (!phoneNumberVerification(phoneNumber)) {
+    return res.status(400).json({
+      message: "Phone number must be 10 digits long",
+    });
+  }
 
   try {
     const checkEncryptedEmail = encrypt(email);
     const userExist = await User.findOne({ email: checkEncryptedEmail });
     if (userExist) return res.status(422).json({ error: "User already exist" });
 
-    console.log("name: ", name);
-    console.log("phoneNumber: ", phoneNumber);
-    console.log("email: ", email);
-    console.log(password);
-
     const encryptedName = encrypt(name);
     const encryptedPhoneNumber = encrypt(phoneNumber);
     const encryptedEmail = encrypt(email);
     const hashedPassword = await bcrypt.hash(password, 12);
-
-    console.log("encryptedName: ", encryptedName);
-    console.log("encryptedPhoneNumber: ", encryptedPhoneNumber);
-    console.log("encryptedEmail: ", encryptedEmail);
-    console.log("encryptedPassword: ", hashedPassword);
 
     const user = new User({
       name: encryptedName,

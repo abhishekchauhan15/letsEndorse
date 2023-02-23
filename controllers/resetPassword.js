@@ -7,7 +7,6 @@ exports.resetPassword = async (req, res) => {
     return res.status(422).json({ error: "Please fill all the fields" });
   }
   try {
-    // const { email } = req.user;
     const userExist = await User.findOne({
       email: req.user.email,
     });

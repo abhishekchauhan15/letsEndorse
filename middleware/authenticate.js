@@ -1,13 +1,8 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/userSchema");
-const { decrypt } = require("../utils/crypto");
 
 exports.authenticate = async (req, res, next) => {
-  console.log("hello from authenticate");
-
   try {
     //taking the token
-    console.log("trying");
     let accessToken = req.headers["authorization"];
     console.log(accessToken);
     accessToken = accessToken.split(" ")[1];
@@ -20,7 +15,6 @@ exports.authenticate = async (req, res, next) => {
       } else {
         console.log("user from token: ", user);
         req.user = user;
-
         next();
       }
     });

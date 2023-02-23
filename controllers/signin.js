@@ -2,6 +2,7 @@ const User = require("../models/userSchema");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { encrypt, decrypt } = require("../utils/crypto.js");
+const generateToken = require("../utils/jwtTokens.js");
 
 exports.signin = async (req, res) => {
   const { email, password } = req.body;
@@ -14,14 +15,13 @@ exports.signin = async (req, res) => {
     if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const token = jwt.sign(
+        const token = generateToken(
           {
             id: user._id.toString(),
             email: user.email,
             phoneNumber: user.phoneNumber,
           },
-          process.env.JWT_SECRET,
-          { expiresIn: "24h" }
+          "24h"
         );
         res.json({ message: "User signed in successfully", token });
       } else {
