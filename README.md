@@ -16,7 +16,7 @@ It contain the following requests :
 *   Update Profile
 
 
-#  API - Schema
+#  API Endpoints
 
 
 - /{{baseUrl}}
