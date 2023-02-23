@@ -15,7 +15,7 @@ const passwordVerification = (password) => {
 
 const phoneNumberVerification = (phoneNumber) => {
    if (phoneNumber.length != 10 ||  !Number.isInteger(phoneNumber)) return false;
-  return true;
+      return true;
 };
 
 module.exports = {
